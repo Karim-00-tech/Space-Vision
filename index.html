@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Nasa Space Explorer</title>
+
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700&display=swap');
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Orbitron', sans-serif;
+}
+
+body {
+  background: radial-gradient(circle at bottom, #090b20 0%, #01010a 100%);
+  color: #fff;
+  overflow-x: hidden;
+  opacity: 0;
+  animation: fadeInPage 1s ease forwards 1.5s;
+  position: relative;
+}
+
+@keyframes fadeInPage { to { opacity: 1; } }
+
+#bgCanvas {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: -2;
+  pointer-events: none;
+}
+
+.loader {
+  position: fixed;
+  inset: 0;
+  background: radial-gradient(circle at 20% 20%, #000, #02021a);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+}
+
+.loader .planet {
+  width: 120px; height: 120px;
+  background: radial-gradient(circle at 30% 30%, #3f91ff, #003b80);
+  border-radius: 50%;
+  box-shadow: inset -20px 0 30px #00193d, 0 0 50px #007bff;
+  animation: rotate 2.5s linear infinite;
+}
+
+@keyframes rotate { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+
+.loader h2 {
+  margin-top: 25px;
+  color: #77b3ff;
+  letter-spacing: 2px;
+  font-size: 1.2rem;
+  animation: fadeText 1.5s ease-in-out infinite alternate;
+}
+
+@keyframes fadeText {
+  0% { opacity: 0.3; transform: translateY(10px); }
+  100% { opacity: 1; transform: translateY(0); }
+}
+
+.loader.hide { animation: fadeOut 0.8s ease forwards; }
+@keyframes fadeOut { to { opacity: 0; visibility: hidden; } }
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 20px 80px;
+  position: relative;
+  backdrop-filter: blur(10px);
+  z-index: 5;
+}
+
+.header .logo {
+  font-size: 28px;
+  color: #6ecbff;
+  text-shadow: 0 0 10px #00aaff;
+}
+
+.header nav ul {
+  display: flex;
+  list-style: none;
+  gap: 40px;
+}
+
+.header nav ul li {
+  position: relative;
+}
+
+/* Header links and Mission button share styles */
+.header nav ul li a, .mission-btn {
+  position: relative;
+  color: #fff;
+  text-decoration: none;
+  font-size: 16px;
+  font-weight: 500;
+  padding-bottom: 4px;
+  transition: color 0.3s;
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-family: 'Orbitron', sans-serif;
+}
+
+.header nav ul li a:hover, .mission-btn:hover {
+  color: #00aaff;
+  text-shadow: 0 0 10px #00aaff;
+}
+
+.header nav ul li a::after, .mission-btn::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: 0%;
+  height: 2px;
+  background: #00aaff;
+  transition: width 0.3s ease;
+}
+
+.header nav ul li a:hover::after, .mission-btn:hover::after {
+  width: 100%;
+}
+
+.header nav ul li a.active, .mission-btn.active {
+  color: #00aaff;
+}
+
+.header nav ul li a.active::after, .mission-btn.active::after {
+  width: 100%;
+}
+
+/* Intro section */
+.content {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  padding: 40px 80px 0 80px;
+  min-height: calc(100vh - 120px);
+  overflow: hidden;
+}
+
+.intro {
+  max-width: 600px;
+  padding: 30px;
+  background: linear-gradient(145deg, rgba(10, 15, 35, 0.8), rgba(0, 0, 0, 0.3));
+  border: 1px solid rgba(0, 170, 255, 0.3);
+  box-shadow: 0 0 40px rgba(0, 170, 255, 0.4);
+  border-radius: 15px;
+  backdrop-filter: blur(10px);
+  flex-shrink: 0;
+}
+
+.intro h1 {
+  font-size: 3em;
+  line-height: 1.3;
+  background: linear-gradient(90deg, #00e0ff, #ff00ff, #ffffff);
+  background-size: 200%;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: galaxyFlow 6s infinite linear;
+  opacity: 0;
+  transform: translateY(40px);
+  animation: slideUp 1.5s ease forwards 1.5s;
+}
+
+@keyframes galaxyFlow { 0% { background-position: 0%; } 100% { background-position: 200%; } }
+
+.intro p {
+  margin-top: 20px;
+  max-width: 480px;
+  color: #bcd3ff;
+  opacity: 0;
+  transform: translateY(50px);
+  animation: slideUp 1.2s ease forwards 2s;
+}
+
+@keyframes slideUp { to { transform: translateY(0); opacity: 1; } }
+
+.mark { animation: colorShift 4s infinite; font-weight: bold; }
+
+@keyframes colorShift {
+  0% { color: #ff00ff; }
+  25% { color: #00ffff; }
+  50% { color: #00ff99; }
+  75% { color: #ffcc00; }
+  100% { color: #ff00ff; }
+}
+
+.cursor { display: inline-block; width: 10px; background: #fff; animation: blink 0.7s infinite; vertical-align: bottom; }
+@keyframes blink { 0%, 50% { opacity: 1; } 51%, 100% { opacity: 0; } }
+
+/* Meteor, student, light-beam, shooting stars */
+.meteor { position: absolute; bottom: 0; left: 80%; width: 420px; height: 180px; background: url('https://raw.githubusercontent.com/abdoelhamd/assets/main/stone_base.png') no-repeat center/contain; z-index: 2; }
+.student { position: absolute; bottom: 120px; left: 20%; width: 200px; height: 300px; background: url('https://cdn.pixabay.com/photo/2021/06/18/07/10/boy-6344392_1280.png') no-repeat center/contain; animation: studentMove 4s ease-in-out infinite alternate; z-index: 3; }
+@keyframes studentMove { 0% { transform: translateY(0); } 100% { transform: translateY(-10px); } }
+
+.light-beam { position: absolute; width: 6px; height: 300px; background: linear-gradient(to top right, rgba(255,255,200,0.8), rgba(255,255,255,0.1)); transform-origin: bottom left; filter: blur(3px); opacity: 0.9; z-index: 4; box-shadow: 0 0 20px rgba(255,255,200,0.6); animation: beamGlow 3s ease-in-out infinite alternate; }
+@keyframes beamGlow { 0% { opacity: 0.6; box-shadow: 0 0 10px rgba(255,255,180,0.7); } 100% { opacity: 1; box-shadow: 0 0 30px rgba(255,255,255,1); } }
+
+.shooting-star { position: fixed; width: 3px; height: 120px; background: linear-gradient(180deg, rgba(0,255,255,1), transparent); opacity: 0; filter: blur(2px); z-index: -1; animation: fallVertical 2s linear forwards; }
+@keyframes fallVertical { 0% { opacity: 1; transform: translateY(0); } 100% { opacity: 0; transform: translateY(900px); } }
+
+.planet-container { position: relative; top: -100px; right: 0; z-index: 5; }
+#earthCanvas{ position: relative; z-index: 6; }
+.meteorite { position: absolute; bottom: -450px; left: -15vw; width: 75vw; height: auto; z-index: 5; }
+.meteorite img { width: 100%; height: auto; display: block; filter: brightness(1.1); }
+
+html, body { height: 100%; overflow-y: hidden; }
+.logo img{ width:55px;height:auto; transition:transform 0.3s ease; }
+.logo{ display:flex;align-items:center;gap:12px; font-size:28px;color:#6ecbff;text-shadow:0 0 10px #00aaff; }
+
+</style>
+</head>
+<body>
+<canvas id="bgCanvas"></canvas>
+
+<div class="loader">
+  <div class="planet"></div>
+  <h2>Exploring the Universe...</h2>
+</div>
+
+<header class="header">
+<div class="logo">
+  <img src="WhatsApp_Image_2025-10-04_at_21.50.14_e804a3a1-removebg-preview.png" alt="SpaceVision Logo">
+  <span style="background: linear-gradient(90deg, #ff00ff, #00ffff, #00ff99, #ffcc00); 
+               -webkit-background-clip: text; 
+               -webkit-text-fill-color: transparent;
+               animation: galaxyFlow 6s infinite linear;">
+     SpaceVision
+  </span>
+</div>
+
+<nav>
+  <ul>
+    <li><a href="index.html" class="active">Home</a></li>
+    <li><a href="WebNasa.html">Gallery</a></li>
+    <li><a href="Explore.html">Discover</a></li>
+    <li><a href="about.html">About</a></li>
+    <li><button class="mission-btn" onclick="location.href='mission.html'">Mission</button></li>
+  </ul>
+</nav>
+</header>
+
+<main class="content">
+  <div class="intro">
+    <h1 id="typewriter"></h1><span class="cursor"></span>
+    <p>Discover real planetary data and images directly from NASA’s open databases and explore them interactively with our <span class="mark">Rocket!</span></p>
+  </div>
+  <div class="planet-container">
+    <canvas id="earthCanvas"></canvas>
+  </div>
+</main>
+
+<div class="meteor"></div>
+<div class="student"></div>
+<div class="meteorite">
+  <img src="6e8b273c8ca638c0f90b73cd0c911301 (1).png" alt="Meteorite" />
+</div>
+<div class="light-beam"></div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r134/three.min.js"></script>
+<script>
+// Typing effect
+const text = "Embark on a Journey Beyond the Stars";
+const textElement = document.getElementById("typewriter");
+let i = 0;
+function typeEffect() {
+  if (i < text.length) {
+    textElement.innerHTML += text.charAt(i);
+    i++;
+    setTimeout(typeEffect, 60);
+  }
+}
+typeEffect();
+
+// Background stars
+const bgCanvas = document.getElementById('bgCanvas');
+const bgCtx = bgCanvas.getContext('2d');
+function resizeCanvas() {
+  bgCanvas.width = window.innerWidth;
+  bgCanvas.height = window.innerHeight;
+}
+window.addEventListener('resize', resizeCanvas);
+resizeCanvas();
+
+const stars = [];
+for (let i = 0; i < 150; i++) {
+  stars.push({
+    x: Math.random() * bgCanvas.width,
+    y: Math.random() * bgCanvas.height,
+    size: Math.random() * 2 + 1,
+    speedX: (Math.random() - 0.5) * 0.5,
+    speedY: (Math.random() - 0.5) * 0.5,
+    color: Math.random() > 0.5 ? '#ffffff' : `hsl(${Math.random() * 60 + 30}, 100%, 70%)`
+  });
+}
+
+function drawStars() {
+  stars.forEach(star => {
+    star.x += star.speedX;
+    star.y += star.speedY;
+    if (star.x < 0) star.x = bgCanvas.width;
+    if (star.x > bgCanvas.width) star.x = 0;
+    if (star.y < 0) star.y = bgCanvas.height;
+    if (star.y > bgCanvas.height) star.y = 0;
+    bgCtx.beginPath();
+    bgCtx.arc(star.x, star.y, star.size, 0, Math.PI * 2);
+    bgCtx.fillStyle = star.color;
+    bgCtx.fill();
+  });
+}
+
+function animateBackground() {
+  bgCtx.clearRect(0, 0, bgCanvas.width, bgCanvas.height);
+  drawStars();
+  requestAnimationFrame(animateBackground);
+}
+animateBackground();
+
+// Loader hide
+window.addEventListener("load", () => {
+  setTimeout(() => {
+    document.querySelector(".loader").classList.add("hide");
+  }, 1500);
+});
+
+// Earth Globe
+const scene = new THREE.Scene();
+const camera = new THREE.PerspectiveCamera(75, 1, 0.1, 1000);
+const renderer = new THREE.WebGLRenderer({ canvas: document.getElementById("earthCanvas"), alpha: true });
+renderer.setSize(800, 800);
+
+const loaderTex = new THREE.TextureLoader();
+const earthTexture = loaderTex.load("https://threejs.org/examples/textures/land_ocean_ice_cloud_2048.jpg");
+const geometry = new THREE.SphereGeometry(2, 64, 64);
+const material = new THREE.MeshStandardMaterial({ map: earthTexture });
+const earth = new THREE.Mesh(geometry, material);
+scene.add(earth);
+
+const light = new THREE.PointLight(0xffffff, 1.5);
+light.position.set(5, 3, 5);
+scene.add(light);
+scene.add(new THREE.AmbientLight(0x404040));
+camera.position.z = 5;
+
+function animate() {
+  requestAnimationFrame(animate);
+  earth.rotation.y += 0.002;
+  renderer.render(scene, camera);
+}
+animate();
+
+// Shooting stars
+function createShootingStar() {
+  const star = document.createElement("div");
+  star.classList.add("shooting-star");
+  document.body.appendChild(star);
+
+  const startX = Math.random() * window.innerWidth;
+  const startY = -150;
+  star.style.left = `${startX}px`;
+  star.style.top = `${startY}px`;
+
+  const duration = Math.random() * 2 + 1.5;
+  star.style.animationDuration = `${duration}s`;
+
+  setTimeout(() => star.remove(), duration * 1000);
+}
+
+setInterval(() => {
+  const count = Math.floor(Math.random() * 3) + 1;
+  for (let i = 0; i < count; i++) {
+    createShootingStar();
+  }
+}, 500);
+
+// Beam auto-align
+function updateBeamToEarth() {
+  const beam = document.querySelector('.light-beam');
+  const rock = document.querySelector('.meteorite img');
+  const earth = document.getElementById('earthCanvas');
+  if (!beam || !rock || !earth) return;
+
+  const rockRect = rock.getBoundingClientRect();
+  const earthRect = earth.getBoundingClientRect();
+
+  const rockX = rockRect.left + rockRect.width * 0.8;
+  const rockY = rockRect.top + rockRect.height * 0.15;
+
+  const earthX = earthRect.left + earthRect.width / 2;
+  const earthY = earthRect.top + earthRect.height / 2;
+
+  const dx = earthX - rockX;
+  const dy = earthY - rockY;
+  const angle = Math.atan2(dy, dx) * (180 / Math.PI);
+  const distance = Math.sqrt(dx * dx + dy * dy);
+
+  beam.style.height = `${distance}px`;
+  beam.style.left = `${rockX}px`;
+  beam.style.top = `${rockY}px`;
+  beam.style.transform = `rotate(${angle - 90}deg)`;
+}
+
+window.addEventListener('resize', updateBeamToEarth);
+window.addEventListener('load', () => setTimeout(updateBeamToEarth, 1000));
+
+</script>
+</body>
+</html>

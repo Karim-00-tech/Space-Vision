@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>About | Astro Tech</title>
+
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700&display=swap');
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Orbitron', sans-serif;
+    }
+
+    body {
+      background: radial-gradient(circle at bottom, #090b20 0%, #01010a 100%);
+      color: #fff;
+      overflow-x: hidden;
+      opacity: 0;
+      animation: fadeInPage 1s ease forwards 1.2s;
+    }
+
+    @keyframes fadeInPage { to { opacity: 1; } }
+
+    /* ===== Background Stars ===== */
+    #bgCanvas {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: -1;
+      pointer-events: none;
+    }
+
+    /* ===== Header ===== */
+    .header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 20px 80px;
+      position: relative;
+      backdrop-filter: blur(10px);
+      z-index: 5;
+    }
+
+    .header .logo {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-size: 28px;
+      color: #6ecbff;
+      text-shadow: 0 0 10px #00aaff;
+    }
+
+    .header .logo img {
+      width: 55px;
+      height: auto;
+      transition: transform 0.3s ease;
+    }
+
+    .header nav ul {
+      display: flex;
+      list-style: none;
+      gap: 40px;
+    }
+
+    .header nav ul li {
+      position: relative;
+    }
+
+    /* Header links and Mission button share styles */
+    .header nav ul li a,
+    .mission-btn {
+      position: relative;
+      color: #fff;
+      text-decoration: none;
+      font-size: 16px;
+      font-weight: 500;
+      padding-bottom: 4px;
+      transition: color 0.3s;
+      background: none;
+      border: none;
+      cursor: pointer;
+      font-family: 'Orbitron', sans-serif;
+    }
+
+    .header nav ul li a:hover,
+    .mission-btn:hover {
+      color: #00aaff;
+      text-shadow: 0 0 10px #00aaff;
+    }
+
+    .header nav ul li a::after,
+    .mission-btn::after {
+      content: '';
+      position: absolute;
+      left: 0;
+      bottom: 0;
+      width: 0%;
+      height: 2px;
+      background: #00aaff;
+      transition: width 0.3s ease;
+    }
+
+    .header nav ul li a:hover::after,
+    .mission-btn:hover::after {
+      width: 100%;
+    }
+
+    .header nav ul li a.active,
+    .mission-btn.active {
+      color: #00aaff;
+    }
+
+    .header nav ul li a.active::after,
+    .mission-btn.active::after {
+      width: 100%;
+    }
+
+    /* ===== About Section ===== */
+    .about-section {
+      max-width: 1000px;
+      margin: 120px auto;
+      padding: 50px;
+      text-align: center;
+      border: 1px solid rgba(0, 170, 255, 0.3);
+      border-radius: 20px;
+      background: linear-gradient(145deg, rgba(10, 15, 35, 0.85), rgba(0, 0, 0, 0.4));
+      box-shadow: 0 0 50px rgba(0, 170, 255, 0.4);
+      backdrop-filter: blur(20px);
+      animation: slideUp 1.3s ease forwards;
+      opacity: 0;
+      transform: translateY(30px);
+    }
+
+    @keyframes slideUp { to { transform: translateY(0); opacity: 1; } }
+
+    .about-section h1 {
+      font-size: 3rem;
+      background: linear-gradient(90deg, #00e0ff, #ff00ff, #ffffff);
+      background-size: 200%;
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      animation: galaxyFlow 6s infinite linear;
+      margin-bottom: 25px;
+    }
+
+    @keyframes galaxyFlow {
+      0% { background-position: 0%; }
+      100% { background-position: 200%; }
+    }
+
+    .about-section p {
+      color: #bcd3ff;
+      line-height: 1.8;
+      font-size: 1.1rem;
+      margin-bottom: 20px;
+    }
+
+    .about-highlight {
+      color: #00ffff;
+      text-shadow: 0 0 12px #00ffff;
+      font-weight: bold;
+    }
+
+    /* ===== Team Section ===== */
+    .team-section {
+      margin-top: 80px;
+    }
+
+    .team-section h2 {
+      font-size: 2.2rem;
+      background: linear-gradient(90deg, #8b5cf6, #00ffff);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      text-shadow: 0 0 30px #00ffff;
+      animation: glowPulse 2s ease-in-out infinite alternate;
+    }
+
+    @keyframes glowPulse {
+      from { text-shadow: 0 0 10px #00ffff; }
+      to { text-shadow: 0 0 40px #8b5cf6; }
+    }
+
+    .team-members {
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 40px;
+      margin-top: 50px;
+    }
+
+    .member {
+      width: 230px;
+      padding: 25px;
+      border-radius: 15px;
+      background: rgba(0, 20, 50, 0.8);
+      box-shadow: 0 0 20px rgba(0, 170, 255, 0.2);
+      transition: all 0.4s ease;
+      text-align: center;
+      word-wrap: break-word;
+      overflow-wrap: break-word;
+      white-space: normal;
+    }
+
+    .member:hover {
+      transform: translateY(-10px) scale(1.05);
+      box-shadow: 0 0 35px #00aaff;
+    }
+
+    .member img {
+      width: 100%;
+      border-radius: 50%;
+      margin-bottom: 15px;
+      border: 2px solid #00aaff;
+      transition: 0.3s;
+    }
+
+    .member img:hover {
+      box-shadow: 0 0 25px #00ffff;
+    }
+
+    .member h3 {
+      color: #00ffff;
+      margin-bottom: 8px;
+      font-size: 1.2rem;
+    }
+
+    .member p {
+      color: #bcd3ff;
+      font-size: 0.9rem;
+      line-height: 1.4;
+      word-wrap: break-word;
+    }
+
+    /* ===== Footer ===== */
+    footer {
+      text-align: center;
+      margin-top: 100px;
+      padding: 20px;
+      color: #888;
+      font-size: 0.9rem;
+    }
+
+  </style>
+</head>
+
+<body>
+  <canvas id="bgCanvas"></canvas>
+
+  <!-- Header -->
+  <header class="header">
+    <div class="logo">
+      <img src="WhatsApp_Image_2025-10-04_at_21.50.14_e804a3a1-removebg-preview.png" alt="SpaceVision Logo">
+      <span style="background: linear-gradient(90deg, #ff00ff, #00ffff, #00ff99, #ffcc00); 
+                   -webkit-background-clip: text; 
+                   -webkit-text-fill-color: transparent;
+                   animation: galaxyFlow 6s infinite linear;">
+         SpaceVision
+      </span>
+    </div>
+
+    <nav>
+      <ul>
+        <li><a href="index.html">Home</a></li>
+        <li><a href="WebNasa.html">Gallery</a></li>
+        <li><a href="Explore.html">Discover</a></li>
+        <li><a href="about.html" class="active">About</a></li>
+        <li><button class="mission-btn" onclick="location.href='mission.html'">Mission</button></li>
+      </ul>
+    </nav>
+  </header>
+
+  <!-- About Section -->
+  <section class="about-section">
+    <h1>About <span class="about-highlight">Astro Tech</span></h1>
+    <p>
+      Welcome to <span class="about-highlight">Astro Tech</span> — where space meets innovation.
+      We are a passionate community of explorers and dreamers dedicated to bringing the wonders of NASA’s universe closer to you.
+      From breathtaking Hubble captures to real Mars surface imaging, our mission is to make cosmic discovery accessible and exciting for everyone.
+    </p>
+    <p>
+      Our platform offers interactive visuals, real-time exploration, and educational resources built for students, enthusiasts, and scientists alike.
+      We believe that by merging <span class="about-highlight">technology</span> and <span class="about-highlight">curiosity</span>,
+      we can spark the next generation of space innovators.
+    </p>
+
+    <div class="team-section">
+      <h2>👨‍🚀 Meet Our Team</h2>
+      <div class="team-members">
+        <div class="member">
+          <img src="personal_photo/Mohamed.jpg" alt="Mohamed Abdelkader">
+          <h3>Mohamed Abdelkader</h3>
+          <p>mabdelkader20092009@gmail.com</p>
+        </div>
+        <div class="member">
+          <img src="personal_photo/karim.jpg" alt="Karim Mohamed">
+          <h3>Karim Mohamed</h3>
+          <p>karim1230h@gmail.com</p>
+        </div>
+        <div class="member">
+          <img src="personal_photo/kiro.png" alt="Kirolos Ayman">
+          <h3>Kirolos Ayman</h3>
+          <p>kirobalmon10@gmail.com</p>
+        </div>
+        <div class="member">
+          <img src="personal_photo/popol.png" alt="Paula Wefki">
+          <h3>Paula Wefki</h3>
+          <p>poulawefki@gmail.com</p>
+        </div>
+        <div class="member">
+          <img src="personal_photo/y.png" alt="Yassin Eslam">
+          <h3>Yassin Eslam</h3>
+          <p>yassinessential1@gmail.com</p>
+        </div>
+        <div class="member">
+          <img src="personal_photo/sayed.jpg" alt="Mohamed Elsayed">
+          <h3>Mohamed Elsayed</h3>
+          <p>e.mohamedelsayed2030@gmail.com</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <footer>© 2025 Astro Tech | Designed with 💫 Passion and Code</footer>
+
+  <!-- Star Background Script -->
+  <script>
+    const canvas = document.getElementById('bgCanvas');
+    const ctx = canvas.getContext('2d');
+    let stars = [];
+
+    function resizeCanvas() {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+      stars = Array.from({ length: 200 }, () => ({
+        x: Math.random() * canvas.width,
+        y: Math.random() * canvas.height,
+        size: Math.random() * 2,
+        speedY: Math.random() * 1 + 0.3,
+        speedX: (Math.random() - 0.5) * 0.5
+      }));
+    }
+
+    function animateStars() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      stars.forEach(star => {
+        star.y += star.speedY;
+        star.x += star.speedX;
+        if (star.y > canvas.height) star.y = 0;
+        if (star.x < 0) star.x = canvas.width;
+        if (star.x > canvas.width) star.x = 0;
+        ctx.beginPath();
+        ctx.arc(star.x, star.y, star.size, 0, Math.PI * 2);
+        ctx.fillStyle = '#ffffff';
+        ctx.fill();
+      });
+      requestAnimationFrame(animateStars);
+    }
+
+    window.addEventListener('resize', resizeCanvas);
+    resizeCanvas();
+    animateStars();
+  </script>
+</body>
+</html>

@@ -1,0 +1,471 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Explore | Astro Tech</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700&display=swap');
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Orbitron', sans-serif;
+    }
+
+    body {
+      background: radial-gradient(circle at bottom, #090b20 0%, #01010a 100%);
+      color: #fff;
+      overflow-x: hidden;
+      position: relative;
+      opacity: 0;
+      animation: fadeInPage 1s ease forwards 1.5s;
+    }
+
+    @keyframes fadeInPage { to { opacity: 1; } }
+
+    /* ===== Background Canvas ===== */
+    #bgCanvas {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: -2;
+      pointer-events: none;
+    }
+
+    /* ===== Header ===== */
+    header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 20px 80px;
+      position: relative;
+      backdrop-filter: blur(10px);
+      z-index: 5;
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-size: 28px;
+      color: #6ecbff;
+      text-shadow: 0 0 10px #00aaff;
+    }
+
+    .logo img {
+      width: 55px;
+      height: auto;
+      transition: transform 0.3s ease;
+    }
+
+    .logo span {
+      background: linear-gradient(90deg, #ff00ff, #00ffff, #00ff99, #ffcc00);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      animation: galaxyFlow 6s infinite linear;
+    }
+
+    @keyframes galaxyFlow { 0% { background-position: 0%; } 100% { background-position: 200%; } }
+
+    nav ul {
+      display: flex;
+      list-style: none;
+      gap: 40px;
+      align-items: center;
+    }
+
+    nav ul li {
+      position: relative;
+    }
+
+    nav ul li a,
+    .mission-btn {
+      position: relative;
+      color: #fff;
+      text-decoration: none;
+      font-size: 16px;
+      font-weight: 500;
+      padding-bottom: 4px;
+      transition: color 0.3s;
+      background: none;
+      border: none;
+      cursor: pointer;
+      font-family: 'Orbitron', sans-serif;
+    }
+
+    nav ul li a:hover,
+    .mission-btn:hover {
+      color: #00aaff;
+      text-shadow: 0 0 10px #00aaff;
+    }
+
+    nav ul li a::after,
+    .mission-btn::after {
+      content: '';
+      position: absolute;
+      left: 0;
+      bottom: 0;
+      width: 0%;
+      height: 2px;
+      background: #00aaff;
+      transition: width 0.3s ease;
+    }
+
+    nav ul li a:hover::after,
+    .mission-btn:hover::after {
+      width: 100%;
+    }
+
+    nav ul li a.active,
+    .mission-btn.active {
+      color: #00aaff;
+    }
+
+    nav ul li a.active::after,
+    .mission-btn.active::after {
+      width: 100%;
+    }
+
+    /* ===== Section General Style ===== */
+    .explore-section {
+      max-width: 1100px;
+      margin: 100px auto;
+      text-align: center;
+      opacity: 0;
+      transform: translateY(40px);
+      animation: fadeUp 1.3s ease forwards;
+    }
+
+    @keyframes fadeUp {
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .explore-section h2 {
+      font-size: 2.4rem;
+      margin-bottom: 30px;
+      background: linear-gradient(90deg, #00aaff, #8b5cf6);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      text-shadow:
+        0 0 10px #00aaff,
+        0 0 20px #00aaff,
+        0 0 30px #8b5cf6,
+        0 0 40px #8b5cf6;
+      animation: glowPulse 2.5s ease-in-out infinite alternate;
+    }
+
+    @keyframes glowPulse {
+      from {
+        text-shadow:
+          0 0 5px #00aaff,
+          0 0 10px #00aaff,
+          0 0 20px #8b5cf6,
+          0 0 25px #8b5cf6;
+      }
+      to {
+        text-shadow:
+          0 0 20px #00ffff,
+          0 0 40px #00ffff,
+          0 0 60px #8b5cf6,
+          0 0 80px #8b5cf6;
+      }
+    }
+
+    .image-row {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 30px;
+      flex-wrap: wrap;
+    }
+
+    .image-card {
+      width: 450px;
+      height: 280px;
+      border-radius: 20px;
+      overflow: hidden;
+      position: relative;
+      transition: transform 0.4s ease, box-shadow 0.4s ease;
+      cursor: pointer;
+    }
+
+    .image-card img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+      transition: transform 0.6s ease;
+    }
+
+    .image-card:hover img {
+      transform: scale(1.08);
+    }
+
+    .image-card:hover {
+      box-shadow: 0 0 30px #00aaff;
+      transform: scale(1.04);
+    }
+
+    .see-more {
+      display: inline-block;
+      margin-top: 40px;
+      background: transparent;
+      border: 2px solid #00aaff;
+      color: #00aaff;
+      padding: 15px 40px;
+      border-radius: 30px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: 0.3s ease;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .see-more span {
+      position: relative;
+      z-index: 2;
+    }
+
+    .see-more::before {
+      content: '';
+      position: absolute;
+      top: 50%; left: 50%;
+      width: 0; height: 0;
+      background: #00aaff;
+      border-radius: 50%;
+      transform: translate(-50%, -50%);
+      transition: 0.4s;
+      z-index: 1;
+    }
+
+    .see-more:hover::before {
+      width: 250%;
+      height: 700%;
+    }
+
+    .see-more:hover {
+      color: #000;
+      box-shadow: 0 0 25px #00aaff;
+      transform: scale(1.08);
+    }
+
+    footer {
+      text-align: center;
+      margin-top: 100px;
+      padding: 20px;
+      color: #888;
+      font-size: 0.9rem;
+    }
+    /* ===== Quiz Section Styles ===== */
+  .quiz-section {
+    background: radial-gradient(circle at center, rgba(0, 170, 255, 0.1), rgba(0,0,0,0.6));
+    padding: 80px 20px;
+    border-radius: 25px;
+    box-shadow: 0 0 50px rgba(0,170,255,0.3);
+    margin: 80px auto;
+    max-width: 900px;
+    text-align: center;
+    animation: fadeUp 1.3s ease forwards;
+  }
+
+  .quiz-section h2 {
+    font-size: 2.6rem;
+    background: linear-gradient(90deg, #00aaff, #8b5cf6, #ff00ff);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    text-shadow: 0 0 20px #00aaff, 0 0 30px #8b5cf6;
+    margin-bottom: 20px;
+    animation: glowPulse 2.5s ease-in-out infinite alternate;
+  }
+
+  .quiz-section p {
+    font-size: 1.1rem;
+    color: #bcd3ff;
+    margin-bottom: 40px;
+  }
+
+  .quiz-button-container {
+    display: flex;
+    justify-content: center;
+  }
+
+  .quiz-btn {
+    border-radius: 50px;
+    padding: 20px 50px;
+    font-size: 1.2rem;
+    font-weight: 600;
+    background: linear-gradient(90deg, #00ffff, #ff00ff);
+    color: #000;
+    border: none;
+    cursor: pointer;
+    transition: 0.4s;
+    position: relative;
+    overflow: hidden;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    box-shadow: 0 0 25px rgba(0,170,255,0.5);
+  }
+
+  .quiz-btn span {
+    position: relative;
+    z-index: 2;
+  }
+
+  .quiz-btn::before {
+    content: '';
+    position: absolute;
+    top: 50%; left: 50%;
+    width: 0; height: 0;
+    background: rgba(255,255,255,0.2);
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+    transition: 0.4s;
+    z-index: 1;
+  }
+
+  .quiz-btn:hover::before {
+    width: 300%;
+    height: 700%;
+  }
+
+  .quiz-btn:hover {
+    transform: scale(1.08);
+    box-shadow: 0 0 35px #00ffff, 0 0 45px #ff00ff;
+  }
+  </style>
+</head>
+<body>
+
+  <!-- Background animation -->
+  <canvas id="bgCanvas"></canvas>
+
+  <!-- Header -->
+  <header>
+    <div class="logo">
+      <img src="WhatsApp_Image_2025-10-04_at_21.50.14_e804a3a1-removebg-preview.png" alt="Astro Tech Logo">
+      <span>Astro Tech</span>
+    </div>
+    <nav>
+      <ul>
+        <li><a href="index.html" >Home</a></li>
+        <li><a href="WebNasa.html">Gallery</a></li>
+        <li><a href="Explore.html" class="active">Discover</a></li>
+        <li><a href="about.html">About</a></li>
+        <li><button class="mission-btn" onclick="location.href='mission.html'">Mission</button></li>
+      </ul>
+    </nav>
+  </header>
+
+  <!-- ===== Hubble Section ===== -->
+  <section class="explore-section">
+    <h2>💫 GALAXY Gallery</h2>
+    <div class="image-row">
+      <div class="image-card"><img src="demo_photo/galaxy1.jpg" alt="galaxy Image 1"></div>
+      <div class="image-card"><img src="demo_photo/galaxy2.jpeg" alt="galaxy Image 2"></div>
+    </div>
+    <button class="see-more" onclick="window.location.href='hubble.html'"><span>See More</span></button>
+  </section>
+
+  <!-- ===== James Webb Section ===== -->
+  <section class="explore-section">
+    <h2>🪐 PLANET Gallery</h2>
+    <div class="image-row">
+      <div class="image-card"><img src="demo_photo/planet1.jpeg" alt="planet1 Image 1"></div>
+      <div class="image-card"><img src="demo_photo/planet2.jpeg" alt="planet2 Image 2"></div>
+    </div>
+    <button class="see-more" onclick="window.location.href='webb.html'"><span>See More</span></button>
+  </section>
+
+  <!-- ===== Moon Section ===== -->
+  <section class="explore-section">
+    <h2>🌕 Moon Captures</h2>
+    <div class="image-row">
+      <div class="image-card"><img src="demo_photo/moon1.jpg" alt="Moon Image 1"></div>
+      <div class="image-card"><img src="demo_photo/moon2.jpg" alt="Moon Image 2"></div>
+    </div>
+    <button class="see-more" onclick="window.location.href='moon.html'"><span>See More</span></button>
+  </section>
+
+  <section class="explore-section">
+    <h2>☄️ NEBULA Gallery</h2>
+    <div class="image-row">
+      <div class="image-card"><img src="demo_photo/nebula1.jpg" alt="Nebula Image 1"></div>
+      <div class="image-card"><img src="demo_photo/nebula2.png" alt="Nebula Image 2"></div>
+    </div>
+    <button class="see-more" onclick="window.location.href='moon.html'"><span>See More</span></button>
+  </section>
+
+  <section class="explore-section">
+    <h2>✨ STAR Gallery</h2>
+    <div class="image-row">
+      <div class="image-card"><img src="demo_photo/star1.jpeg" alt="Star Image 1"></div>
+      <div class="image-card"><img src="demo_photo/star2.jpeg" alt="Star Image 2"></div>
+    </div>
+    <button class="see-more" onclick="window.location.href='moon.html'"><span>See More</span></button>
+  </section>
+  <!-- ===== Quiz Section ===== -->
+<section class="explore-section quiz-section">
+  <h2>🧠 Ready for a Space Quiz?</h2>
+  <p>Test your knowledge about galaxies, planets, and stars! 🚀</p>
+  <div class="quiz-button-container">
+    <button class="see-more quiz-btn" onclick="window.location.href='quiz.html'">
+      <span>Take the Quiz</span>
+    </button>
+  </div>
+</section>
+
+  <footer>© 2025 Astro Tech | Designed with 💫 Passion and Code</footer>
+
+  <script>
+    // Smooth, fast, twinkling star animation
+    const bgCanvas = document.getElementById('bgCanvas');
+    const bgCtx = bgCanvas.getContext('2d');
+    let stars = [];
+
+    function resizeCanvas() {
+      bgCanvas.width = window.innerWidth;
+      bgCanvas.height = window.innerHeight;
+      stars = Array.from({ length: 250 }, () => ({
+        x: Math.random() * bgCanvas.width,
+        y: Math.random() * bgCanvas.height,
+        size: Math.random() * 1.5 + 0.5,
+        speedX: (Math.random() - 0.5) * 1.2,
+        speedY: (Math.random() - 0.5) * 1.2,
+        alpha: Math.random(),
+        delta: Math.random() * 0.02 + 0.005
+      }));
+    }
+
+    window.addEventListener('resize', resizeCanvas);
+    resizeCanvas();
+
+    function animateStars() {
+      bgCtx.clearRect(0, 0, bgCanvas.width, bgCanvas.height);
+      stars.forEach(star => {
+        star.x += star.speedX;
+        star.y += star.speedY;
+        star.alpha += star.delta;
+        if (star.alpha <= 0 || star.alpha >= 1) star.delta *= -1;
+        if (star.x < 0) star.x = bgCanvas.width;
+        if (star.x > bgCanvas.width) star.x = 0;
+        if (star.y < 0) star.y = bgCanvas.height;
+        if (star.y > bgCanvas.height) star.y = 0;
+
+        bgCtx.beginPath();
+        bgCtx.arc(star.x, star.y, star.size, 0, Math.PI * 2);
+        bgCtx.fillStyle = `rgba(255, 255, 255, ${star.alpha})`;
+        bgCtx.fill();
+      });
+      requestAnimationFrame(animateStars);
+    }
+    animateStars();
+  </script>
+</body>
+</html>

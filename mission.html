@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SpaceVision | Missions</title>
+
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700&display=swap');
+    * {margin:0;padding:0;box-sizing:border-box;font-family:'Orbitron',sans-serif;}
+    html,body{
+      height:100%;
+      overflow-x:hidden;
+      background:radial-gradient(circle at bottom,#090b20 0%,#01010a 100%);
+      color:#fff;position:relative;
+    }
+
+    /* ==== STAR BACKGROUND ==== */
+    canvas#spaceBg{
+      position:fixed;
+      top:0;left:0;
+      width:100%;height:100%;
+      z-index:0;
+      background:radial-gradient(circle at bottom,#090b20 0%,#01010a 100%);
+    }
+
+    /* ==== HEADER ==== */
+    .header{
+      display:flex;align-items:center;justify-content:space-between;
+      padding:20px 80px;backdrop-filter:blur(10px);
+      position:relative;z-index:5;
+    }
+    .logo{
+      display:flex;align-items:center;gap:12px;
+      font-size:28px;color:#6ecbff;text-shadow:0 0 10px #00aaff;
+    }
+
+    /* ==== ANIMATED LOGO ==== */
+    .logo img{
+      width:55px;height:auto;
+      animation:pulseGlow 4s infinite ease-in-out,colorShift 10s infinite linear;
+      transition:transform 0.3s ease;
+    }
+    .logo img:hover{transform:scale(1.1);}
+    @keyframes pulseGlow{
+      0%,100%{filter:drop-shadow(0 0 12px #00ffff);transform:scale(1);}
+      50%{filter:drop-shadow(0 0 28px #00aaff);transform:scale(1.05);}
+    }
+    @keyframes colorShift{
+      0%{filter:drop-shadow(0 0 18px #00ffff);}
+      25%{filter:drop-shadow(0 0 22px #ff00ff);}
+      50%{filter:drop-shadow(0 0 25px #00ff99);}
+      75%{filter:drop-shadow(0 0 22px #ffaa00);}
+      100%{filter:drop-shadow(0 0 18px #00ffff);}
+    }
+    .logo span{animation:textGlow 8s infinite linear;}
+    @keyframes textGlow{
+      0%{color:#00ffff;text-shadow:0 0 10px #00ffff;}
+      25%{color:#ff00ff;text-shadow:0 0 10px #ff00ff;}
+      50%{color:#00ff99;text-shadow:0 0 10px #00ff99;}
+      75%{color:#ffaa00;text-shadow:0 0 10px #ffaa00;}
+      100%{color:#00ffff;text-shadow:0 0 10px #00ffff;}
+    }
+    nav ul{display:flex;list-style:none;gap:40px;}
+    nav ul li a{color:#fff;text-decoration:none;transition:0.3s;}
+    nav ul li a:hover{color:#00aaff;text-shadow:0 0 10px #00aaff;}
+
+    /* ==== MISSION SECTION ==== */
+    .mission-section{
+      padding:60px 80px;text-align:center;position:relative;z-index:2;
+    }
+    .mission-section h1{
+      font-size:3em;
+      background:linear-gradient(90deg,#00e0ff,#ff00ff,#ffffff);
+      -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+      animation:galaxyFlow 6s infinite linear;background-size:200%;
+    }
+    @keyframes galaxyFlow{0%{background-position:0%;}100%{background-position:200%;}}
+    .mission-section p{
+      margin-top:20px;max-width:700px;margin-inline:auto;
+      color:#bcd3ff;line-height:1.6;
+    }
+    /* ==== MISSION CARDS ==== */
+    .missions-container{
+      display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));
+      gap:40px;margin-top:60px;padding-bottom:80px;
+    }
+    .mission-card{
+      background:rgba(15,20,40,0.8);
+      border:1px solid rgba(0,170,255,0.4);
+      border-radius:15px;padding:25px;
+      transition:0.4s;position:relative;cursor:pointer;
+      box-shadow:0 0 25px rgba(0,170,255,0.3);
+    }
+    .mission-card:hover{
+      transform:translateY(-8px) scale(1.03);
+      box-shadow:0 0 40px rgba(0,170,255,0.6);
+    }
+    .mission-card h2{color:#00e0ff;margin-bottom:15px;}
+    .mission-card p{color:#bcd3ff;font-size:0.95rem;line-height:1.5;}
+
+    /* ==== SIDE PANEL ==== */
+    .mission-preview{
+      position:fixed;top:0;right:-600px;width:550px;height:100%;
+      background:rgba(10,20,40,0.9);backdrop-filter:blur(15px);
+      border-left:2px solid rgba(0,170,255,0.3);
+      box-shadow:-10px 0 30px rgba(0,170,255,0.2);
+      transition:right 0.6s ease;z-index:999;
+      display:flex;flex-direction:column;align-items:center;justify-content:center;
+      text-align:center;
+    }
+    .mission-preview.active{right:0;}
+    .mission-preview img{
+      width:70%;border-radius:20px;
+      box-shadow:0 0 40px rgba(0,170,255,0.6);margin-bottom:25px;
+    }
+    .mission-preview h2{color:#00e0ff;margin-bottom:10px;font-size:1.5rem;}
+    .mission-preview p{max-width:400px;color:#cfe5ff;line-height:1.6;font-size:0.95rem;}
+    .close-panel{
+      position:absolute;top:25px;right:30px;color:#00aaff;font-size:28px;
+      cursor:pointer;transition:0.3s;
+    }
+    .close-panel:hover{color:#fff;transform:scale(1.2);}
+    footer{text-align:center;margin-top:100px;padding:20px;color:#888;font-size:0.9rem;}
+
+    .header nav ul li {
+  position: relative;
+    }
+
+    .header nav ul li a {
+    position: relative;
+    color: #fff;
+    text-decoration: none;
+    transition: color 0.3s;
+    padding-bottom: 4px;
+    }
+
+    .header nav ul li a:hover {
+      color: #00aaff;
+      text-shadow: 0 0 10px #00aaff;
+    }
+
+    .header nav ul li a::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    width: 0%;
+    height: 2px;
+    background: #00aaff;
+    transition: width 0.3s ease;
+    }
+
+    .header nav ul li a:hover::after {
+    width: 100%;
+    }
+
+    .header nav ul li a.active::after {
+    width: 100%;
+    }
+
+    footer {
+    text-align: center;
+    margin-top: 100px;
+    padding: 20px;
+    color: #888;
+    font-size: 0.9rem;
+    }
+
+  </style>
+</head>
+<body>
+  <!-- SPACE BACKGROUND CANVAS -->
+  <canvas id="spaceBg"></canvas>
+
+  <!-- HEADER -->
+  <header class="header">
+    <div class="logo">
+      <img src="WhatsApp_Image_2025-10-04_at_21.50.14_e804a3a1-removebg-preview.png" alt="SpaceVision Logo">
+        <span style="background: linear-gradient(90deg, #ff00ff, #00ffff, #00ff99, #ffcc00); 
+               -webkit-background-clip: text; 
+               -webkit-text-fill-color: transparent;
+               animation: galaxyFlow 6s infinite linear;">
+     SpaceVision
+  </span>
+    </div>
+    <header>
+        <nav>
+        <ul>
+        <li><a href="index.html" >Home</a></li>
+        <li><a href="WebNasa.html">Gallery</a></li>
+        <li><a href="Explore.html">Discover</a></li>
+        <li><a href="about.html">About</a></li>
+        <li><a href="mission.html" class="active">Mission</a></li>
+        </ul>
+        </nav>
+    </header>
+  </header>
+
+  <!-- MAIN CONTENT -->
+  <section class="mission-section">
+    <h1>NASA’s Greatest Missions</h1>
+    <p>Click a mission to explore it in depth.</p>
+
+    <div class="missions-container">
+      <div class="mission-card" data-img="https://www.nasa.gov/wp-content/uploads/2018/04/block1_night_mf_bkdrop_adj_0_1.jpg" data-title="Artemis Program" data-desc="NASA’s mission to return humans to the Moon and establish a base for future Mars exploration.">
+        <h2>🚀 Artemis Program</h2><p>NASA’s next step toward deep space exploration.</p>
+      </div>
+      <div class="mission-card" data-img="https://upload.wikimedia.org/wikipedia/commons/thumb/3/3f/HST-SM4.jpeg/500px-HST-SM4.jpeg" data-title="Hubble Telescope" data-desc="Hubble’s eye has captured galaxies, stars, and nebulae for over three decades, revolutionizing astronomy.">
+        <h2>🛰️ Hubble Telescope</h2><p>The most iconic telescope orbiting Earth since 1990.</p>
+      </div>
+      <div class="mission-card" data-img="https://i.extremetech.com/imagery/content-types/02l5EoeJDii226KL090tE6F/hero-image.fit_lim.v1678673298.jpg" data-title="Mars Rovers" data-desc="Curiosity and Perseverance explore the Martian surface, searching for ancient life signs.">
+        <h2>🤖 Mars Rovers</h2><p>Exploring Mars, one crater at a time.</p>
+      </div>
+      <div class="mission-card" data-img="https://upload.wikimedia.org/wikipedia/commons/thumb/d/d9/Voyager_probes_with_the_outer_worlds.jpg/500px-Voyager_probes_with_the_outer_worlds.jpg" data-title="Voyager Probes" data-desc="Launched in 1977, Voyager 1 and 2 are humanity’s messengers beyond the Solar System.">
+        <h2>🌌 Voyager Probes</h2><p>The farthest explorers in human history.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- SIDE PANEL -->
+  <div class="mission-preview" id="missionPreview">
+    <div class="close-panel" id="closePanel">✖</div>
+    <img id="previewImg" src="" alt="">
+    <h2 id="previewTitle"></h2>
+    <p id="previewDesc"></p>
+  </div>
+
+  <footer>© 2025 Astro Tech | Designed with 💫 Passion and Code</footer>
+
+  <!-- ==== JS ==== -->
+  <script>
+    /* ==== STARFIELD + METEORS ==== */
+    const canvas = document.getElementById("spaceBg");
+    const ctx = canvas.getContext("2d");
+    let w, h, stars, meteors;
+    function init(){
+      w = canvas.width = window.innerWidth;
+      h = canvas.height = window.innerHeight;
+      stars = Array.from({length:200},()=>({
+        x:Math.random()*w,
+        y:Math.random()*h,
+        size:Math.random()*1.5,
+        speed:Math.random()*0.5+0.2
+      }));
+      meteors = [];
+    }
+    function draw(){
+      ctx.clearRect(0,0,w,h);
+      // stars
+      ctx.fillStyle="white";
+      stars.forEach(s=>{
+        ctx.beginPath();
+        ctx.arc(s.x,s.y,s.size,0,2*Math.PI);
+        ctx.fill();
+        s.y+=s.speed;
+        if(s.y>h){s.y=0;s.x=Math.random()*w;}
+      });
+      // meteors
+      meteors.forEach((m,i)=>{
+        ctx.strokeStyle=`rgba(0,200,255,${m.alpha})`;
+        ctx.lineWidth=2;
+        ctx.beginPath();
+        ctx.moveTo(m.x,m.y);
+        ctx.lineTo(m.x-m.length,m.y+m.length);
+        ctx.stroke();
+        m.x+=m.vx;m.y+=m.vy;m.alpha-=0.005;
+        if(m.alpha<=0) meteors.splice(i,1);
+      });
+      // spawn random meteor
+      if(Math.random()<0.02){
+        meteors.push({
+          x:Math.random()*w, y:Math.random()*h*0.3,
+          vx:-4, vy:4, length:Math.random()*50+50, alpha:1
+        });
+      }
+      requestAnimationFrame(draw);
+    }
+    window.addEventListener("resize",init);
+    init();draw();
+
+    /* ==== PANEL LOGIC ==== */
+    const cards=document.querySelectorAll('.mission-card');
+    const preview=document.getElementById('missionPreview');
+    const img=document.getElementById('previewImg');
+    const title=document.getElementById('previewTitle');
+    const desc=document.getElementById('previewDesc');
+    const closeBtn=document.getElementById('closePanel');
+    cards.forEach(card=>{
+      card.addEventListener('click',()=>{
+        img.src=card.dataset.img;
+        title.textContent=card.dataset.title;
+        desc.textContent=card.dataset.desc;
+        preview.classList.add('active');
+      });
+    });
+    closeBtn.addEventListener('click',()=>preview.classList.remove('active'));
+    window.addEventListener('click',e=>{
+      if(e.target===preview)preview.classList.remove('active');
+    });
+  </script>
+</body>
+</html>

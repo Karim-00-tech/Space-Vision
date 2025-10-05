@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Space Explorer Challenge - Test Your Cosmic Knowledge!</title>
+
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700&display=swap');
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Orbitron', sans-serif;
+    }
+
+    body {
+      background: radial-gradient(circle at bottom, #090b20 0%, #01010a 100%);
+      color: #fff;
+      min-height: 100vh;
+      overflow-x: hidden;
+      position: relative;
+    }
+
+    /* Stars background animation */
+    .stars {
+      width: 2px;
+      height: 2px;
+      background: white;
+      box-shadow: 100px 200px white, 150px 300px white, 300px 100px white,
+        400px 200px white, 500px 300px white, 600px 150px white, 700px 250px white,
+        800px 50px white, 900px 200px white, 1000px 300px white;
+      animation: moveStars 100s linear infinite;
+      position: absolute;
+      top: 0;
+      left: 0;
+    }
+
+    @keyframes moveStars {
+      from {
+        transform: translateY(0);
+      }
+      to {
+        transform: translateY(-2000px);
+      }
+    }
+
+    .quiz-container {
+      position: relative;
+      z-index: 10;
+      max-width: 900px;
+      margin: 80px auto;
+      background: rgba(255, 255, 255, 0.05);
+      padding: 40px;
+      border-radius: 30px;
+      box-shadow: 0 0 40px rgba(0, 170, 255, 0.3);
+      backdrop-filter: blur(15px);
+      text-align: center;
+    }
+
+    h1 {
+      color: #00aaff;
+      text-shadow: 0 0 20px #00ffff, 0 0 40px #8b5cf6;
+      font-size: 2.3rem;
+      margin-bottom: 10px;
+      animation: glowPulse 3s ease-in-out infinite alternate;
+    }
+
+    @keyframes glowPulse {
+      from {
+        text-shadow: 0 0 10px #00aaff, 0 0 30px #8b5cf6;
+      }
+      to {
+        text-shadow: 0 0 25px #00ffff, 0 0 50px #8b5cf6;
+      }
+    }
+
+    p {
+      opacity: 0.8;
+      margin-bottom: 30px;
+      font-size: 1rem;
+    }
+
+    .score-display {
+      font-size: 1.8rem;
+      margin-bottom: 25px;
+      color: #00ffff;
+      text-shadow: 0 0 15px #00ffff;
+    }
+
+    .progress-bar {
+      width: 100%;
+      height: 10px;
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 5px;
+      margin: 20px 0 30px;
+      overflow: hidden;
+    }
+
+    .progress {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, #00aaff, #8b5cf6);
+      border-radius: 5px;
+      transition: width 0.4s ease;
+      box-shadow: 0 0 20px #00aaff;
+    }
+
+    .question {
+      font-size: 1.4rem;
+      line-height: 1.6;
+      margin-bottom: 25px;
+      background: linear-gradient(90deg, #00ffff, #8b5cf6);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .options {
+      display: grid;
+      gap: 15px;
+      margin-bottom: 20px;
+    }
+
+    .option {
+      padding: 18px;
+      border-radius: 15px;
+      background: rgba(0, 0, 0, 0.3);
+      border: 2px solid #00aaff55;
+      transition: all 0.3s ease;
+      cursor: pointer;
+      color: #fff;
+      text-shadow: 0 0 8px #00aaff33;
+    }
+
+    .option:hover {
+      background: rgba(0, 170, 255, 0.15);
+      border-color: #00aaff;
+      box-shadow: 0 0 15px #00aaff;
+      transform: scale(1.02);
+    }
+
+    .correct {
+      background: rgba(0, 255, 150, 0.25);
+      border-color: #00ff88;
+      box-shadow: 0 0 20px #00ff88;
+    }
+
+    .incorrect {
+      background: rgba(255, 0, 80, 0.25);
+      border-color: #ff0066;
+      box-shadow: 0 0 20px #ff0066;
+    }
+
+    .feedback {
+      font-size: 1.1rem;
+      margin: 25px 0;
+      min-height: 60px;
+      line-height: 1.6;
+    }
+
+    .bonus-alert {
+      color: #ffd700;
+      font-weight: bold;
+      text-shadow: 0 0 15px #ffd700;
+      animation: pulse 1s infinite;
+    }
+
+    .feature-highlight {
+      color: #00ffcc;
+      font-weight: bold;
+    }
+
+    @keyframes pulse {
+      0%,
+      100% {
+        opacity: 1;
+      }
+      50% {
+        opacity: 0.6;
+      }
+    }
+
+    button {
+      background: linear-gradient(90deg, #00aaff, #8b5cf6);
+      color: #fff;
+      border: none;
+      padding: 15px 40px;
+      font-size: 1rem;
+      border-radius: 30px;
+      cursor: pointer;
+      margin: 15px;
+      transition: 0.3s ease;
+      box-shadow: 0 0 15px #00aaff;
+      font-family: 'Orbitron', sans-serif;
+      letter-spacing: 1px;
+    }
+
+    button:hover {
+      transform: scale(1.07);
+      box-shadow: 0 0 25px #00ffff;
+    }
+
+    footer {
+      text-align: center;
+      margin-top: 80px;
+      color: #888;
+      font-size: 0.9rem;
+    }
+  </style>
+</head>
+<body>
+  <div class="stars"></div>
+
+  <div class="quiz-container">
+    <h1>🚀 Space Explorer Challenge</h1>
+    <p>Test your cosmic knowledge and earn your Astro Tech rank!</p>
+
+    <div class="score-display">Score: <span id="score">0</span></div>
+
+    <div class="progress-bar">
+      <div class="progress" id="progress"></div>
+    </div>
+
+    <div class="question" id="question">Loading question...</div>
+
+    <div class="options" id="options"></div>
+
+    <div class="feedback" id="feedback"></div>
+
+    <button id="next-btn">Next Question</button>
+    <button id="restart-btn" style="display: none;">Restart Quiz</button>
+  </div>
+
+  <footer>© 2025 Astro Tech | Journey Beyond the Stars</footer>
+
+  <script>
+    const quizData = [
+      {
+        question: "Which planet is known as the Red Planet?",
+        options: ["Venus", "Mars", "Jupiter", "Mercury"],
+        answer: "Mars",
+      },
+      {
+        question: "What is the name of our galaxy?",
+        options: [
+          "Andromeda Galaxy",
+          "Whirlpool Galaxy",
+          "Milky Way Galaxy",
+          "Sombrero Galaxy",
+        ],
+        answer: "Milky Way Galaxy",
+      },
+      {
+        question: "Who was the first person to walk on the Moon?",
+        options: [
+          "Yuri Gagarin",
+          "Buzz Aldrin",
+          "Neil Armstrong",
+          "Michael Collins",
+        ],
+        answer: "Neil Armstrong",
+      },
+      {
+        question: "What is the hottest planet in our Solar System?",
+        options: ["Mercury", "Venus", "Mars", "Jupiter"],
+        answer: "Venus",
+      },
+      {
+        question: "Which telescope has captured the farthest images of space?",
+        options: ["Spitzer", "James Webb", "Hubble", "Kepler"],
+        answer: "James Webb",
+      },
+    ];
+
+    const questionEl = document.getElementById("question");
+    const optionsEl = document.getElementById("options");
+    const feedbackEl = document.getElementById("feedback");
+    const scoreEl = document.getElementById("score");
+    const progressEl = document.getElementById("progress");
+    const nextBtn = document.getElementById("next-btn");
+    const restartBtn = document.getElementById("restart-btn");
+
+    let currentQuestion = 0;
+    let score = 0;
+    let canAnswer = true;
+
+    function loadQuestion() {
+      const current = quizData[currentQuestion];
+      questionEl.textContent = current.question;
+      optionsEl.innerHTML = "";
+      feedbackEl.textContent = "";
+      current.options.forEach((option) => {
+        const btn = document.createElement("div");
+        btn.classList.add("option");
+        btn.textContent = option;
+        btn.onclick = () => selectAnswer(btn, option);
+        optionsEl.appendChild(btn);
+      });
+      updateProgress();
+    }
+
+    function selectAnswer(btn, selected) {
+      if (!canAnswer) return;
+      canAnswer = false;
+      const correctAnswer = quizData[currentQuestion].answer;
+      if (selected === correctAnswer) {
+        btn.classList.add("correct");
+        feedbackEl.innerHTML =
+          "✅ Correct! <span class='feature-highlight'>" +
+          correctAnswer +
+          "</span> is the right answer!";
+        score++;
+        scoreEl.textContent = score;
+      } else {
+        btn.classList.add("incorrect");
+        feedbackEl.innerHTML =
+          "❌ Oops! The correct answer was <span class='feature-highlight'>" +
+          correctAnswer +
+          "</span>.";
+      }
+      nextBtn.style.display = "inline-block";
+    }
+
+    function updateProgress() {
+      const progressPercent = ((currentQuestion + 1) / quizData.length) * 100;
+      progressEl.style.width = progressPercent + "%";
+    }
+
+    nextBtn.onclick = () => {
+      currentQuestion++;
+      if (currentQuestion < quizData.length) {
+        canAnswer = true;
+        loadQuestion();
+      } else {
+        showFinalScore();
+      }
+      nextBtn.style.display = "none";
+    };
+
+    function showFinalScore() {
+      questionEl.textContent = "🌟 Quiz Complete!";
+      optionsEl.innerHTML = "";
+      feedbackEl.innerHTML = `Your final score is <span class='bonus-alert'>${score}/${quizData.length}</span>!`;
+      restartBtn.style.display = "inline-block";
+    }
+
+    restartBtn.onclick = () => {
+      score = 0;
+      currentQuestion = 0;
+      scoreEl.textContent = score;
+      restartBtn.style.display = "none";
+      canAnswer = true;
+      loadQuestion();
+    };
+
+    loadQuestion();
+  </script>
+</body>
+</html>
